@@ -170,18 +170,6 @@ succeed.
 
 ---
 
-## Traefik integration (optional)
-
-If you run [traefik-local-proxy](../traefik-local-proxy) for local routing:
-
-1. Start `traefik-local-proxy` first (it creates the shared `proxy` network).
-2. In `docker-compose.yml`, uncomment the `labels:` block on the `wakapi` service
-    and uncomment the `proxy: external: true` network at the bottom.
-3. `mise run restart`.
-4. Wakapi will be reachable at `http://wakapi.localhost`.
-
----
-
 ## Available tasks
 
 ```

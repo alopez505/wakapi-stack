@@ -9,6 +9,7 @@
     "editor.tabSize": 2
   },
   "shellcheck.enable": true,
+  "python.terminal.useEnvFile": true,
   "yaml.schemas": {
     "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json": "docker-compose.yml"
   }

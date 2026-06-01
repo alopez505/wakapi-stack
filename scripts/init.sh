@@ -18,9 +18,22 @@ command -v openssl >/dev/null 2>&1 || { echo "Error: openssl not found." >&2; ex
 
 SALT="$(openssl rand -base64 32)"
 # Portable sed — '|' delimiter avoids clashing with base64 '/' characters
-sed "s|^WAKAPI_SALT=.*|WAKAPI_SALT=${SALT}|" .env.example > .env
+sed \
+  -e "s|^WAKAPI_SALT=.*|WAKAPI_SALT=${SALT}|" \
+  -e "s|^# WAKAPI_UID=.*|WAKAPI_UID=$(id -u)|" \
+  -e "s|^# WAKAPI_GID=.*|WAKAPI_GID=$(id -g)|" \
+  .env.example > .env
 
 echo "Created .env with a generated WAKAPI_SALT."
+
+# Pre-create local state directories so Docker does not create them as root,
+# which would prevent the nonroot container user from writing SQLite data.
+mkdir -p data backups
+if [ "$(id -u)" -ne 0 ]; then
+  chown "$(id -u):$(id -g)" data backups 2>/dev/null || true
+fi
+chmod 700 data backups 2>/dev/null || true
+
 echo
 echo "Next — open .env and set:"
 echo "  ROLE=host   (the server machine)"

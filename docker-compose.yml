@@ -49,6 +49,11 @@ services:
       WAKAPI_DB_HOST: "${WAKAPI_DB_HOST:-}"
       WAKAPI_DB_PORT: "${WAKAPI_DB_PORT:-5432}"
       WAKAPI_DB_USER: "${WAKAPI_DB_USER:-wakapi}"
+    # Run as the host user so bind-mounted ./data is writable.
+    # The distroless image default (nonroot = UID 65532) cannot write to a
+    # host directory owned by a normal Linux user. Set WAKAPI_UID/GID in .env
+    # if your host UID differs from 1000 (check with: id -u && id -g).
+    user: "${WAKAPI_UID:-1000}:${WAKAPI_GID:-1000}"
     volumes:
       - ./data:/data
     # Bound to loopback — not exposed on LAN unless you remove 127.0.0.1:
@@ -59,15 +64,17 @@ services:
     # Healthcheck intentionally omitted: current Wakapi images may lack curl/wget,
     # which would make Docker report false "unhealthy" states.
     # ---------------------------------------------------------------------------
-    #  OPTIONAL: Traefik integration (requires traefik-local-proxy to be running)
+    #  OPTIONAL: Reverse proxy integration (Traefik-style labels)
     #  Uncomment the labels block and add proxy to the networks list below,
     #  then also uncomment the proxy external network at the bottom of this file.
+    #  The external proxy network must already exist before startup.
     # ---------------------------------------------------------------------------
     # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.routers.wakapi.rule=Host(`wakapi.localhost`)"
-    #   - "traefik.http.routers.wakapi.entrypoints=web"
-    #   - "traefik.http.services.wakapi.loadbalancer.server.port=3000"
+    #   traefik.enable: "true"
+    #   traefik.hostname: "wakapi"
+    #   traefik.http.routers.wakapi.entrypoints: "websecure"
+    #   traefik.http.routers.wakapi.tls: "true"
+    #   traefik.http.services.wakapi.loadbalancer.server.port: "3000"
 
   # ---------------------------------------------------------------------------
   #  cloudflared  —  Cloudflare Tunnel agent   [profile: tunnel]
@@ -81,7 +88,7 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
-      TUNNEL_TOKEN: ${CF_TUNNEL_TOKEN:?CF_TUNNEL_TOKEN required when COMPOSE_PROFILES includes tunnel}
+      TUNNEL_TOKEN: ${CF_TUNNEL_TOKEN:-}
     networks:
       - wakapi-net
     depends_on:
@@ -150,7 +157,7 @@ services:
 networks:
   wakapi-net:
     name: wakapi-net
-  # Uncomment to enable Traefik integration (start traefik-local-proxy first):
+  # Uncomment to enable reverse proxy integration (external network required):
   # proxy:
   #   external: true
   #   name: proxy

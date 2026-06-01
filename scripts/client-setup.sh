@@ -35,6 +35,7 @@ CFG="$TARGET_HOME/.wakatime.cfg"
 if [ -f "$CFG" ]; then
   BACKUP="$CFG.bak.$(date +%Y%m%d-%H%M%S)"
   cp "$CFG" "$BACKUP"
+  chmod 600 "$BACKUP" 2>/dev/null || true
   echo "Backed up existing cfg: $BACKUP"
   echo "WARNING: ~/.wakatime.cfg will be fully replaced."
   echo "  Restore custom settings (exclude, proxy, projectmap) from the backup if needed."
