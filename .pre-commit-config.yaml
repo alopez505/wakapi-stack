@@ -1,0 +1,31 @@
+# Local guardrails. Preferred full check:
+#   mise run validate
+# Install hooks once:
+#   uvx pre-commit==4.2.0 install
+# Refresh pinned versions anytime:
+#   pre-commit autoupdate
+# Run against everything manually:
+#   uvx pre-commit==4.2.0 run --all-files
+
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks          # blocks commits containing secrets / tokens
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.11.0
+    hooks:
+      - id: shellcheck        # lints scripts/*.sh
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-executables-have-shebangs
+      - id: check-added-large-files
+        args: ["--maxkb=500"]

@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "WakaTime.vscode-wakatime",
+    "ms-azuretools.vscode-docker",
+    "redhat.vscode-yaml",
+    "timonwong.shellcheck",
+    "tamasfe.even-better-toml",
+    "EditorConfig.EditorConfig"
+  ]
+}

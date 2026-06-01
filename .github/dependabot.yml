@@ -1,0 +1,16 @@
+version: 2
+updates:
+  # Keep GitHub Actions pinned to latest SHAs automatically.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Alert on new Wakapi / cloudflared / watchtower image releases.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"

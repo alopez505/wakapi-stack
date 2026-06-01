@@ -1,0 +1,23 @@
+# Secrets / local config — never commit
+.env
+litestream.yml
+
+# Live database, Postgres data, snapshots (binary state)
+data/
+pgdata/
+backups/
+*.db
+*.db-wal
+*.db-shm
+
+# Litestream local cache
+.litestream/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# mise local overrides
+.mise.local.toml

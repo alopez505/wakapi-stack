@@ -1,0 +1,75 @@
+# =============================================================================
+#  mise — cross-OS task runner for this stack.
+#  Same `mise run <task>` on macOS, Linux, and WSL2 (wherever make isn't).
+#  Install mise: https://mise.jdx.dev
+#  List tasks:   mise tasks
+# -----------------------------------------------------------------------------
+#  Role is decided by the LOCAL, gitignored .env (ROLE=host|client), never git.
+#  docker compose reads .env natively; scripts source it themselves.
+#
+#  mise is used here as the task runner. There is no application runtime to pin;
+#  uv is pinned only as an operational tool for local validation/pre-commit.
+#  System dependencies required:
+#    docker (engine + compose plugin), openssl, sqlite3 (for backup/restore)
+# =============================================================================
+
+[tools]
+uv = "0.10.10"
+
+# -----------------------------------------------------------------------------
+#  Tasks
+# -----------------------------------------------------------------------------
+
+[tasks.init]
+description = "Create .env from .env.example with a generated salt (first-time setup)"
+run = "./scripts/init.sh"
+
+[tasks.up]
+description = "Bring this machine up per ROLE (host=stack, client=wakatime cfg)"
+run = "./scripts/role.sh up"
+
+[tasks.down]
+description = "Stop the stack — host only"
+run = "./scripts/require-host.sh && docker compose down"
+
+[tasks.restart]
+description = "Recreate containers without pulling new images — host only"
+run = "./scripts/require-host.sh && docker compose up -d --force-recreate"
+
+[tasks.pull]
+description = "Pull new images and recreate containers — host only"
+run = "./scripts/require-host.sh && docker compose pull && docker compose up -d"
+
+[tasks.logs]
+description = "Follow stack logs — host only (Ctrl-C to exit)"
+run = "./scripts/require-host.sh && docker compose logs -f"
+
+[tasks.ps]
+description = "Show running services — host only"
+run = "./scripts/require-host.sh && docker compose ps"
+
+[tasks.config]
+description = "Validate docker-compose using this machine's local .env"
+run = "docker compose config -q && echo 'Config OK'"
+
+[tasks.backup]
+description = "Snapshot the SQLite database to ./backups/ — host only"
+run = "./scripts/require-host.sh && ./scripts/backup.sh"
+
+[tasks.restore]
+description = "Restore DB from backup — host only. Usage: mise run restore ./backups/wakapi-DATE.db"
+usage = 'arg "<backup>" help="Path to a wakapi-*.db backup file"'
+run = './scripts/require-host.sh && ./scripts/restore.sh "${usage_backup:?}"'
+
+[tasks.client-setup]
+description = "Write ~/.wakatime.cfg pointing at the server (client machines)"
+run = "./scripts/client-setup.sh"
+
+[tasks.validate]
+description = "Run all local checks: pre-commit hooks + compose config for default/all profiles"
+run = """
+uvx pre-commit==4.2.0 run --all-files && \
+COMPOSE_PROFILES=none WAKAPI_SALT=ci WAKAPI_PUBLIC_URL=https://wakapi.example.com CF_TUNNEL_TOKEN=ci docker compose --env-file .env.example config -q && \
+COMPOSE_PROFILES=tunnel,autoupdate WAKAPI_SALT=ci WAKAPI_PUBLIC_URL=https://wakapi.example.com CF_TUNNEL_TOKEN=ci docker compose --env-file .env.example config -q && \
+echo 'All checks passed'
+"""
