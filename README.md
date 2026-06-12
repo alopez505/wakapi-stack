@@ -6,8 +6,8 @@
 ![Task runner: mise](https://img.shields.io/badge/tasks-mise-FBBF24)
 ![Edge: Cloudflare Tunnel](https://img.shields.io/badge/edge-Cloudflare%20Tunnel-F38020?logo=cloudflare&logoColor=white)
 
-A clean, self-hosted [Wakapi](https://github.com/muety/wakapi) deployment —
-the open-source, WakaTime-compatible backend for coding-time stats — behind an
+A self-hosted [Wakapi](https://github.com/muety/wakapi) deployment -
+the open-source, WakaTime-compatible backend for coding-time stats - behind an
 optional [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/)
 for zero-exposure public access.
 
@@ -15,12 +15,12 @@ Track coding hours per language / project / editor across all your machines,
 reporting into one instance you control. Runs anywhere Docker Engine runs —
 bare metal, a VM, a homelab box, or Docker inside WSL2.
 
-- **No open inbound ports, no public origin IP** — the tunnel dials outbound,
+- **No open inbound ports, no public origin IP** - the tunnel dials outbound,
   so the host stays invisible behind Cloudflare's edge.
-- **One repo, every machine** — the same `git pull` lands everywhere; a local,
+- **One repo, every machine** - the same `git pull` lands everywhere; a local,
   gitignored `.env` decides whether a box is the **host** or a **client**.
-- **One file of state** — SQLite by default; back it up by copying one file.
-- **Reproducible tasks** — [mise](https://mise.jdx.dev) gives identical
+- **One file of state** - SQLite by default; back it up by copying one file.
+- **Reproducible tasks** - [mise](https://mise.jdx.dev) gives identical
   `mise run <task>` commands on macOS, Linux, and WSL2.
 - **Nothing personal in the repo** — all config lives in `.env`.
 
@@ -79,7 +79,7 @@ server is a two-line `.env` change on two machines, never a commit.
 
 | Dependency | Where needed | Notes |
 |---|---|---|
-| [Docker Engine](https://docs.docker.com/engine/) + Compose plugin | host | System install — not managed by mise |
+| [Docker Engine](https://docs.docker.com/engine/) + Compose plugin | host | System install - not managed by mise |
 | [mise](https://mise.jdx.dev) | all machines | Cross-OS task runner |
 | `uv` | machines running validation | Pinned by mise; used to run pre-commit via `uvx` |
 | `openssl` | all machines during first init | Generates `WAKAPI_SALT`; clients can ignore the generated host-only value |
@@ -90,7 +90,7 @@ server is a two-line `.env` change on two machines, never a commit.
 
 ---
 
-## Quick start — host machine
+## Quick start - host machine
 
 ```bash
 # 1. Install mise: https://mise.jdx.dev
@@ -127,7 +127,7 @@ mise run restart
 
 ---
 
-## Quick start — client machine
+## Quick start - client machine
 
 ```bash
 git clone <this-repo> ~/src/wakapi-stack && cd ~/src/wakapi-stack
