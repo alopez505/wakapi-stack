@@ -2,16 +2,21 @@
 #   mise run validate
 # Install hooks once:
 #   uvx pre-commit==4.2.0 install
-# Refresh pinned versions anytime:
+# Refresh pinned versions anytime (gitleaks is pinned in mise.toml instead):
 #   pre-commit autoupdate
 # Run against everything manually:
 #   uvx pre-commit==4.2.0 run --all-files
 
 repos:
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.30.1
+  - repo: local
     hooks:
-      - id: gitleaks          # blocks commits containing secrets / tokens
+      # Blocks commits containing secrets / tokens. Runs the mise-pinned binary
+      # (mise.toml); the upstream hook builds gitleaks with Go.
+      - id: gitleaks
+        name: gitleaks
+        entry: mise exec -- gitleaks git --pre-commit --redact --staged --verbose --no-banner
+        language: system
+        pass_filenames: false
 
   - repo: https://github.com/koalaman/shellcheck-precommit
     rev: v0.11.0
