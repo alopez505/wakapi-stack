@@ -8,13 +8,15 @@
 #  docker compose reads .env natively; scripts source it themselves.
 #
 #  mise is used here as the task runner. There is no application runtime to pin;
-#  uv is pinned only as an operational tool for local validation/pre-commit.
+#  uv and gitleaks are pinned only as operational tools for local
+#  validation/pre-commit; the gitleaks hook runs the mise binary.
 #  System dependencies required:
 #    docker (engine + compose plugin), openssl, sqlite3 (for backup/restore)
 # =============================================================================
 
 [tools]
 uv = "0.10.10"
+gitleaks = "8.30.1"
 
 # -----------------------------------------------------------------------------
 #  Tasks
